@@ -4,6 +4,11 @@
     "mongoose": "^6.6.1"
   },
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "lint": "npx eslint",
+    "dev": "nodemon app.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
   }
 }

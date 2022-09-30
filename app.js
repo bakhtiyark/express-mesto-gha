@@ -1,8 +1,13 @@
+//Модули
 const express = require('express');
 const mongoose = require('mongoose');
 
+//Порт
 const { PORT = 3000 } = process.env;
+
+//Роутеры
 const { cardRouter } = require('./routes/cards');
+const { userRouter } = require('./routes/users');
 
 const app = express();
 
