@@ -1,48 +1,25 @@
-const User = require('../models/user');
+const router = require('express').Router();
+const {
+  createUser,
+  getUsers,
+  getUser,
+  patchUser,
+  patchAvatar
+} = require('../controllers/users');
 
-const createUser = (req, res) => {
-    const { name, about, avatar } = req.body;
+// Создание пользователя
+router.post('/', createUser);
 
-    if (!name || !about) {
-        return res.status(400).send({ message: 'Одно из полей не заполнено' });
-    }
+// Получениеи данных пользователя по ID
+router.get('/:userId', getUser);
 
-    return User.create({ name, about, avatar })
-        .then((user) => res.status(201).send(user))
-        .catch((err) => {
-            if (err.name === 'ValidationError') {
-                return res.status(400).send({ message: 'Одно из полей не заполнено' });
-            }
-            return res.status(500).send({ message: 'Что-то пошло не так' });
-        });
-};
-const getUser = (req, res) => {
-    const { userId } = req.params;
+// Получение данных всех пользователей
+router.get('/', getUsers);
 
-    User.findById(userId)
-        .then((user) => {
-            if (!user) {
-                return res.status(404).send({ message: 'Пользователь не найдет' });
-            }
+// Обновление данных пользователя
+router.patch('/me', patchUser);
 
-            return res.status(200).send(user);
-        })
-        .catch((err) => {
-            if (err.name === 'ValidationError') {
-                return res.status(400).send({ message: 'ID пользователя не найдет' });
-            }
-            return res.status(500).send({ message: 'Что-то пошло не так' });
-        });
-};
+// Замен аватара
+router.patch('/me/avatar', patchAvatar);
 
-const getUsers = (res) => {
-    User.find({})
-        .then((users) => res.status(200).send(users))
-        .catch(() => res.status(500).send({ message: 'Что-то пошло не так' }));
-};
-
-module.exports = {
-    createUser,
-    getUsers,
-    getUser
-};
+module.exports.userRouter = router;

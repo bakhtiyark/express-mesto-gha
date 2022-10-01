@@ -5,10 +5,11 @@
   },
   "scripts": {
     "start": "node app.js",
-    "lint": "npx eslint",
+    "lint": "npx eslint .",
     "dev": "nodemon app.js"
   },
   "devDependencies": {
+    "eslint": "^8.24.0",
     "nodemon": "^2.0.20"
   }
 }

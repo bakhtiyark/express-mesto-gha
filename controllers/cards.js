@@ -11,10 +11,7 @@ const dataNotFound = {
     "code": 404,
     "message": "Карточка или пользователь не найден."
 }
-const defaultError = {
-    "code": 500,
-    "message": "Общая ошибка"
-}
+
 // Создание карты
 const createCard = (req, res, next) => {
     const { name, link } = req.body;
