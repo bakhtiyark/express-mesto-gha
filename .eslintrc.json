@@ -17,6 +17,7 @@
                     "_id"
                 ]
             }
-        ]
+        ],
+        "no-unused-vars": ["process"]
     }
 }

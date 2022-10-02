@@ -22,4 +22,4 @@ router.put('/cards/:cardId', likeCard);
 // Снятие лайка с карточки
 router.delete('/cards/:cardId', removeLike);
 
-module.exports.userRouter = router;
+module.exports.cardRouter = router;
