@@ -33,8 +33,8 @@ const getUser = (req, res) => {
             }
 
         })
-        .catch((err) => {
-            if (err.name === 'ValidationError') {
+        .catch(() => {
+            if (!userId) {
                 res.status(400).send({ message: 'ID пользователя не найдет' });
                 return;
             } else {
