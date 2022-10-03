@@ -14,7 +14,7 @@ router.post('/', createUser);
 router.get('/:userId', getUser);
 
 // Получение данных всех пользователей
-router.get('/users', getUsers);
+router.get('/', getUsers);
 
 // Обновление данных пользователя
 router.patch('/me', patchUser);
