@@ -18,7 +18,7 @@ const createCard = (req, res, next) => {
     const ownerId = req.user._id;
 
     Card.create({ name, link, owner: ownerId })
-        .then((card) => res.status(200).send({data:card}))
+        .then((card) => res.status(200).send({ data: card }))
         .catch((err) => {
             if (err.status === invalidData.code) {
                 return next(invalidData.message);
@@ -29,10 +29,10 @@ const createCard = (req, res, next) => {
 };
 
 // Получить все карты
-const getCards = (res, next) => {
+const getCards = (req, res) => {
     Card.find({})
-        .then((cards) => res.status(200).send(cards))
-        .catch(next);
+        .then((cards) => res.status(200).send({ data: cards }))
+        .catch(() => res.status(500).send({ message: `lalala  ` }));
 };
 
 // Удалить карточку

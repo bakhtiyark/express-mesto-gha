@@ -17,9 +17,9 @@ router.get('/', getCards);
 router.delete('/:cardId', deleteCard);
 
 // Лайканье карточки
-router.put('/:cardId', likeCard);
+router.put('/:cardId/likes', likeCard);
 
 // Снятие лайка с карточки
-router.delete('/:cardId', removeLike);
+router.delete('/:cardId/likes', removeLike);
 
 module.exports.cardRouter = router;
