@@ -18,6 +18,13 @@
                 ]
             }
         ],
-        "no-unused-vars": ["process"]
+        "no-unused-vars": [
+            "error",
+            {
+                "vars": [
+                    "process"
+                ]
+            }
+        ]
     }
 }

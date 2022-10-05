@@ -45,8 +45,8 @@ const getUser = (req, res) => {
 };
 
 // Получить данные всех юзеров
-const getUsers = (_, res) => {
-    User.find({})
+const getUsers = (_,req, res) => {
+    User.find({req})
         .then((users) => res.status(200).send(users))
         .catch(() => res.status(500).send({ message: 'Что-то пошло не так' }));
 };
