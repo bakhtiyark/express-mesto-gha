@@ -15,10 +15,10 @@ const dataNotFound = {
 // Создание карты
 const createCard = (req, res, next) => {
     const { name, link } = req.body;
-    const owner = req.user._id;
+    const ownerId = req.user._id;
 
-    Card.create({ name, link, owner })
-        .then((card) => res.status(201).send(card))
+    Card.create({ name, link, owner: ownerId })
+        .then((card) => res.status(200).send({data:card}))
         .catch((err) => {
             if (err.status === invalidData.code) {
                 return next(invalidData.message);
