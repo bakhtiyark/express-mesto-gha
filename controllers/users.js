@@ -4,7 +4,7 @@ const createUser = (req, res) => {
     const { name, about, avatar } = req.body;
 
     return User.create({ name, about, avatar })
-        .then((user) => res.status(201).send({data:user}))
+        .then((user) => res.send({ data: user }))
         .catch((err) => {
             if (err.name === 'ValidationError') {
                 res.status(400).send({ message: 'Одно из полей не заполнено' });
@@ -23,7 +23,7 @@ const getUser = (req, res) => {
                 res.status(404).send({ message: 'Пользователь не найдет' });
                 return;
             } else {
-                return res.status(200).send(user);
+                return res.status(200).send({ data: user });
             }
 
         })
@@ -32,7 +32,7 @@ const getUser = (req, res) => {
                 res.status(400).send({ message: 'ID пользователя не найдет' });
                 return;
             } else {
-                return res.status(500).send({ message: 'Внутренняя ошибка сервера'});
+                return res.status(500).send({ message: 'Внутренняя ошибка сервера' });
 
             }
         });
@@ -57,11 +57,11 @@ const patchUser = (req, res) => {
                 res.status(200).send(user)
             }
 
-        }).catch((err) =>{
+        }).catch((err) => {
             if (err.name === "ValidationError") {
-                res.status(400).send({message: "Некорректные данные пользователя"})
+                res.status(400).send({ message: "Некорректные данные пользователя" })
             } else {
-                res.status(500).send({message: "Внутренняя ошибка сервера"})
+                res.status(500).send({ message: "Внутренняя ошибка сервера" })
             }
         })
 };
