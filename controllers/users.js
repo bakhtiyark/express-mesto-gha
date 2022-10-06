@@ -20,8 +20,7 @@ const getUser = (req, res) => {
     User.findById(req.params.userId)
         .then((user) => {
             if (!user) {
-                res.status(404).send({ message: 'Пользователь не найдет' });
-                return;
+                throw new NotFound('ID пользователя не найден')
             } else {
                 return res.status(200).send({ data: user });
             }
@@ -29,8 +28,7 @@ const getUser = (req, res) => {
         })
         .catch(() => {
             if (!userId) {
-                res.status(400).send({ message: 'ID пользователя не найдет' });
-                return;
+                throw new NotFound('ID пользователя не найден')
             } else {
                 return res.status(500).send({ message: 'Внутренняя ошибка сервера' });
 
