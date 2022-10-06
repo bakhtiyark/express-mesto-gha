@@ -1,6 +1,6 @@
 //Импорт модели
 const Card = require('../models/card');
-const {NotFound, ValidationError} = require("../errors/errors")
+const { NotFound, ValidationError } = require("../errors/errors")
 
 
 // Создание карты
@@ -11,10 +11,10 @@ const createCard = (req, res, next) => {
     Card.create({ name, link, owner: ownerId })
         .then((card) => res.status(200).send({ data: card }))
         .catch((err) => {
-            if (err.status === ValidationError.status) {
-                return next(ValidationError.message);
+            if (err.name === "ValidationError") {
+                res.status(400).send({ message: "Некорректные данные" });
             } else {
-                return next(err);
+                res.status(500).send({ message: "Внутренняя ошибка сервера" });
             }
         });
 };
@@ -23,7 +23,7 @@ const createCard = (req, res, next) => {
 const getCards = (req, res) => {
     Card.find({})
         .then((cards) => res.status(200).send({ data: cards }))
-        .catch(() => res.status(500).send({ message: `lalala  ` }));
+        .catch(() => res.status(500).send({ message: "Внутренняя ошибка сервера" }));
 };
 
 // Удалить карточку

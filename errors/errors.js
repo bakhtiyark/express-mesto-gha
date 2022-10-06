@@ -1,3 +1,5 @@
+//Erreur 400
+
 class ValidationError extends Error {
     constructor(message) {
         super(message)
@@ -6,7 +8,7 @@ class ValidationError extends Error {
         this.status = 400
     }
 }
-
+// 404
 class NotFound extends Error {
     constructor(message) {
         super(message)

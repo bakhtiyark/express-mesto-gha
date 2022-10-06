@@ -14,7 +14,7 @@ const createUser = (req, res) => {
                 res.status(400).send({ message: 'Одно из полей не заполнено' });
                 return;
             } else {
-                return res.status(500).send({ message: 'Что-то пошло не так' });
+                return res.status(500).send({ message: 'Внутренняя ошибка сервера' });
             }
 
         });
@@ -38,7 +38,7 @@ const getUser = (req, res) => {
                 res.status(400).send({ message: 'ID пользователя не найдет' });
                 return;
             } else {
-                return res.status(500).send({ message: 'Что-то пошло не так' });
+                return res.status(500).send({ message: 'Внутренняя ошибка сервера'});
 
             }
         });
@@ -48,7 +48,7 @@ const getUser = (req, res) => {
 const getUsers = (_,req, res) => {
     User.find({req})
         .then((users) => res.status(200).send(users))
-        .catch(() => res.status(500).send({ message: 'Что-то пошло не так' }));
+        .catch(() => res.status(500).send({ message: 'Внутренняя ошибка сервера' }));
 };
 
 // Обновление данных пользователя
