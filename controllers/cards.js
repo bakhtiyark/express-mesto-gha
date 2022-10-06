@@ -1,16 +1,7 @@
 //Импорт модели
 const Card = require('../models/card');
+const {NotFound, ValidationError} = require("../errors/errors")
 
-//Ошибки
-const invalidData = {
-    "code": 400,
-    "message": "переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля;"
-}
-
-const dataNotFound = {
-    "code": 404,
-    "message": "Карточка или пользователь не найден."
-}
 
 // Создание карты
 const createCard = (req, res, next) => {
@@ -20,8 +11,8 @@ const createCard = (req, res, next) => {
     Card.create({ name, link, owner: ownerId })
         .then((card) => res.status(200).send({ data: card }))
         .catch((err) => {
-            if (err.status === invalidData.code) {
-                return next(invalidData.message);
+            if (err.status === ValidationError.status) {
+                return next(ValidationError.message);
             } else {
                 return next(err);
             }
@@ -42,7 +33,7 @@ const deleteCard = (req, res, next) => {
     Card.findById(cardId)
         .then((card) => {
             if (!card) {
-                throw dataNotFound.message;
+                throw new NotFound("Данная страница не найдена");
             }
             return Card.findByIdAndRemove(cardId)
                 .then(() => res.status(200).send({ message: 'Карточка удалена' }))
@@ -58,7 +49,7 @@ const likeCard = (req, res) => {
         { new: true },
     ).then((card) => {
         if (!card) {
-            throw dataNotFound.message;
+            throw new NotFound("Данная страница не найдена");
         } else {
             res.status(200).send(card);
         }
@@ -73,7 +64,7 @@ const removeLike = (req, res) => {
         { new: true },
     ).then((card) => {
         if (!card) {
-            throw dataNotFound.message;
+            throw new NotFound("Данная страница не найдена");
         }
         res.status(200).send(card);
     })
