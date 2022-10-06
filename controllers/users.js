@@ -4,7 +4,7 @@ const createUser = (req, res) => {
     const { name, about, avatar } = req.body;
 
     return User.create({ name, about, avatar })
-        .then((user) => res.status(201).send(user))
+        .then((user) => res.status(201).send({data:user}))
         .catch((err) => {
             if (err.name === 'ValidationError') {
                 res.status(400).send({ message: 'Одно из полей не заполнено' });
@@ -57,6 +57,12 @@ const patchUser = (req, res) => {
                 res.status(200).send(user)
             }
 
+        }).catch((err) =>{
+            if (err.name === "ValidationError") {
+                res.status(400).send({message: "Некорректные данные пользователя"})
+            } else {
+                res.status(500).send({message: "Внутренняя ошибка сервера"})
+            }
         })
 };
 
