@@ -3,10 +3,6 @@ const User = require('../models/user');
 const createUser = (req, res) => {
     const { name, about, avatar } = req.body;
 
-    if (!name || !about) {
-        return res.status(400).send({ message: 'Одно из полей не заполнено' });
-    }
-
     return User.create({ name, about, avatar })
         .then((user) => res.status(201).send(user))
         .catch((err) => {
@@ -21,9 +17,7 @@ const createUser = (req, res) => {
 };
 // Получение конкретного пользователя
 const getUser = (req, res) => {
-    const { userId } = req.params;
-
-    User.findById(userId)
+    User.findById(req.params.userId)
         .then((user) => {
             if (!user) {
                 res.status(404).send({ message: 'Пользователь не найдет' });
@@ -45,9 +39,9 @@ const getUser = (req, res) => {
 };
 
 // Получить данные всех юзеров
-const getUsers = (_,req, res) => {
-    User.find({req})
-        .then((users) => res.status(200).send(users))
+const getUsers = (req, res) => {
+    User.find({})
+        .then((user) => res.status(200).send(user))
         .catch(() => res.status(500).send({ message: 'Внутренняя ошибка сервера' }));
 };
 
