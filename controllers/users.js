@@ -15,26 +15,25 @@ const createUser = (req, res) => {
 
         });
 };
+//hitlist
 // Получение конкретного пользователя
-const getUser = (req, res) => {
+const getUser = (req, res, next) => {
     User.findById(req.params.userId)
-        .then((user) => {
-            if (!user) {
-                throw new NotFound('ID пользователя не найден')
-            } else {
-                return res.status(200).send({ data: user });
-            }
-
-        })
-        .catch(() => {
-            if (!userId) {
-                throw new NotFound('ID пользователя не найден')
-            } else {
-                return res.status(500).send({ message: 'Внутренняя ошибка сервера' });
-
-            }
-        });
-};
+      .orFail(() => {
+        throw new NotFound('ID пользователя не найден');
+      })
+      .then((user) => res.send({ data: user }))
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          return next(new ValidationError('ID пользователя не найден'));
+        }
+        if (err.message === 'NotFound') {
+          return next(new NotFound('Пользователь не найден'));
+        } else {
+          next(err);
+        }
+      });
+  };
 
 // Получить данные всех юзеров
 const getUsers = (req, res) => {
