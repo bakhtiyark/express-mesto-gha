@@ -4,7 +4,7 @@ const { NotFound, ValidationError } = require("../errors/errors")
 const createUser = (req, res) => {
     const { name, about, avatar } = req.body;
 
-        User.create({ name, about, avatar })
+    User.create({ name, about, avatar })
         .then((user) => res.send({ data: user }))
         .catch((err) => {
             if (err.name === 'ValidationError') {
@@ -17,23 +17,22 @@ const createUser = (req, res) => {
 };
 //hitlist
 // Получение конкретного пользователя
-const getUser = (req, res, next) => {
+const getUser = (req, res) => {
     User.findById(req.params.userId)
-      .orFail(() => {
-        throw new NotFound('ID пользователя не найден');
-      })
-      .then((user) => res.send(user ))
-      .catch((err) => {
-        if (err.name === 'CastError') {
-          return next(new ValidationError('ID пользователя не найден'));
-        }
-        if (err.message === 'NotFound') {
-          return next(new NotFound('Пользователь не найден'));
-        } else {
-          next(err);
-        }
-      });
-  };
+        .orFail(() => {
+            throw new NotFound('ID пользователя не найден');
+        })
+        .then((user) => res.send({data: user}))
+        .catch((err) => {
+            if (err.name === 'CastError') {
+                throw new ValidationError('ID пользователя не найден');
+            } else if (err.status === 404) {
+                throw new NotFound('Пользователь не найден');
+            } else {
+                res.status(500).send({ message: "Внутренняя ошибка сервера" });
+            }
+        });
+};
 
 // Получить данные всех юзеров
 const getUsers = (req, res) => {
