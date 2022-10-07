@@ -22,7 +22,7 @@ const getUser = (req, res, next) => {
       .orFail(() => {
         throw new NotFound('ID пользователя не найден');
       })
-      .then((user) => res.send({ data: user }))
+      .then((user) => res.send(user ))
       .catch((err) => {
         if (err.name === 'CastError') {
           return next(new ValidationError('ID пользователя не найден'));
