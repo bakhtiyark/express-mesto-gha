@@ -47,14 +47,17 @@ const likeCard = (req, res) => {
         req.params.cardId,
         { $addToSet: { likes: req.user._id } },
         { new: true },
-    ).then((card) => {
-        if (!card) {
-            throw new NotFound("Данная страница не найдена");
-        } else {
-            res.status(200).send(card);
-        }
-
-    })
+    ).orFail(() => { throw new NotFound("Карточка с указанным ID не найдена") })
+        .then((card) => res.send({ data: card }))
+        .catch((err) => {
+            if (err.name === 'CastError') {
+                res.status(400).send({ message: "Карточка с указанным ID не найдена"});
+            } else if (404) {
+                res.status(404).send({ message: "Данная страница не найдена" });
+            } else {
+                res.status(500).send({ message: 'Внутренняя ошибка сервера' });
+            }
+        });
 };
 //Удаления лайка с карты
 const removeLike = (req, res) => {
@@ -62,7 +65,8 @@ const removeLike = (req, res) => {
         req.params.cardId,
         { $pull: { likes: req.user._id } },
         { new: true },
-    ).then((card) => {
+    ).orFail(() => { throw new NotFound("Карточка с указанным ID не найдена") })
+    .then((card) => {
         if (!card) {
             throw new NotFound("Данная страница не найдена");
         }

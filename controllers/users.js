@@ -24,7 +24,7 @@ const getUser = (req, res, next) => {
       })
       .then((user) => res.send({ data: user }))
       .catch((err) => {
-        if (err.name === 'ValidationError') {
+        if (err.name === 'CastError') {
           return next(new ValidationError('ID пользователя не найден'));
         }
         if (err.message === 'NotFound') {
