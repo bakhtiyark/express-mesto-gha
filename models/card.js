@@ -1,3 +1,4 @@
+/*  eslint linebreak-style: ["error", "windows"]  */
 const mongoose = require('mongoose');
 
 const cardSchema = new mongoose.Schema({
