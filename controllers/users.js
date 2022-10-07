@@ -23,9 +23,9 @@ const getUser = (req, res) => {
         .then((user) => res.send({ data: user }))
         .catch((err) => {
             if (err.name === 'CastError') {
-                res.status(400).send('ID пользователя не найден');
+                res.status(400).send({ message: 'ID пользователя не найден' });
             } else if (err.status === 404) {
-                res.status(404).send('Пользователь не найден');
+                res.status(404).send({ message: 'Пользователь не найден' });
             } else {
                 res.status(500).send({ message: "Внутренняя ошибка сервера" });
             }
