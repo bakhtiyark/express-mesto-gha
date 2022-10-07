@@ -19,15 +19,13 @@ const createUser = (req, res) => {
 // Получение конкретного пользователя
 const getUser = (req, res) => {
     User.findById(req.params.userId)
-        .orFail(() => {
-            throw new NotFound('ID пользователя не найден');
-        })
-        .then((user) => res.send({data: user}))
+        .orFail(new NotFound('ID пользователя не найден'))
+        .then((user) => res.send({ data: user }))
         .catch((err) => {
             if (err.name === 'CastError') {
-                throw new ValidationError('ID пользователя не найден');
+                res.status(400).send('ID пользователя не найден');
             } else if (err.status === 404) {
-                throw new NotFound('Пользователь не найден');
+                res.status(404).send('Пользователь не найден');
             } else {
                 res.status(500).send({ message: "Внутренняя ошибка сервера" });
             }
