@@ -2,7 +2,7 @@
 
 //  Импорт модели
 const Card = require('../models/card');
-const { NotFound } = require('../errors/errors');
+const { NotFound } = require('../errors/NotFound');
 
 //  Создание карты
 const createCard = (req, res) => {

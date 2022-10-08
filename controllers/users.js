@@ -1,7 +1,7 @@
 /*  eslint linebreak-style: ["error", "windows"]  */
 
 const User = require('../models/user');
-const { NotFound } = require('../errors/errors');
+const { NotFound } = require('../errors/NotFound');
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
@@ -65,7 +65,7 @@ const patchAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(404).send('Пользователь не найден.');
+        res.status(404).send({ message: 'Пользователь не найден.' });
       } else {
         res.status(200).send(user);
       }
