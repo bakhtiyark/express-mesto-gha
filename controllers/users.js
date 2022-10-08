@@ -1,7 +1,10 @@
-/*  eslint linebreak-style: ["error", "windows"]  */
-
 const User = require('../models/user');
 const { NotFound } = require('../errors/NotFound');
+const {
+  NOT_FOUND,
+  INCORRECT_DATA,
+  SERVER_ERROR,
+} = require('../utils/constants');
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
@@ -10,13 +13,13 @@ const createUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Одно из полей не заполнено' });
+        res.status(INCORRECT_DATA).send({ message: 'Одно из полей не заполнено' });
       } else {
-        res.status(500).send({ message: 'Внутренняя ошибка сервера' });
+        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
       }
     });
 };
-// hitlist
+
 // Получение конкретного пользователя
 const getUser = (req, res) => {
   User.findById(req.params.userId)
@@ -24,11 +27,11 @@ const getUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'ID пользователя не найден' });
-      } else if (err.status === 404) {
-        res.status(404).send({ message: 'Пользователь не найден' });
+        res.status(INCORRECT_DATA).send({ message: 'Некорректный ID пользователя' });
+      } else if (err.status === NOT_FOUND) {
+        res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });
       } else {
-        res.status(500).send({ message: 'Внутренняя ошибка сервера' });
+        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
       }
     });
 };
@@ -37,7 +40,7 @@ const getUser = (req, res) => {
 const getUsers = (req, res) => {
   User.find({})
     .then((user) => res.status(200).send(user))
-    .catch(() => res.status(500).send({ message: 'Внутренняя ошибка сервера' }));
+    .catch(() => res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' }));
 };
 
 // Обновление данных пользователя
@@ -46,15 +49,15 @@ const patchUser = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(404).send('Пользователь не найден.');
+        res.status(NOT_FOUND).send({ message: 'Пользователь не найден.' });
       } else {
-        res.status(200).send(user);
+        res.send(user);
       }
     }).catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Некорректные данные пользователя' });
+        res.status(INCORRECT_DATA).send({ message: 'Некорректные данные пользователя' });
       } else {
-        res.status(500).send({ message: 'Внутренняя ошибка сервера' });
+        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
       }
     });
 };
@@ -65,9 +68,15 @@ const patchAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(404).send({ message: 'Пользователь не найден.' });
+        res.status(NOT_FOUND).send({ message: 'Пользователь не найден.' });
       } else {
-        res.status(200).send(user);
+        res.send(user);
+      }
+    }).catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(INCORRECT_DATA).send({ message: 'Некорректные данные пользователя' });
+      } else {
+        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
       }
     });
 };
@@ -78,5 +87,4 @@ module.exports = {
   getUser,
   patchUser,
   patchAvatar,
-
 };

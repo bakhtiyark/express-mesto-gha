@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const {
-    createCard,
-    getCards,
-    deleteCard,
-    likeCard,
-    removeLike,
+  createCard,
+  getCards,
+  deleteCard,
+  likeCard,
+  removeLike,
 } = require('../controllers/cards');
 
 // Создание карточки

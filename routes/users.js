@@ -4,7 +4,7 @@ const {
   getUsers,
   getUser,
   patchUser,
-  patchAvatar
+  patchAvatar,
 } = require('../controllers/users');
 
 // Создание пользователя

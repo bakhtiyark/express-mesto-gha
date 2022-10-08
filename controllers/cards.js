@@ -1,8 +1,12 @@
-/*  eslint linebreak-style: ["error", "windows"]  */
-
 //  Импорт модели
 const Card = require('../models/card');
 const { NotFound } = require('../errors/NotFound');
+
+const {
+  NOT_FOUND,
+  INCORRECT_DATA,
+  SERVER_ERROR,
+} = require('../utils/constants');
 
 //  Создание карты
 const createCard = (req, res) => {
@@ -10,12 +14,12 @@ const createCard = (req, res) => {
   const ownerId = req.user._id;
 
   Card.create({ name, link, owner: ownerId })
-    .then((card) => res.status(200).send({ data: card }))
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Некорректные данные' });
+        res.status(INCORRECT_DATA).send({ message: 'Некорректные данные' });
       } else {
-        res.status(500).send({ message: 'Внутренняя ошибка сервера' });
+        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
       }
     });
 };
@@ -23,9 +27,10 @@ const createCard = (req, res) => {
 //  Получить все карты
 const getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.status(200).send({ data: cards }))
-    .catch(() => res.status(500).send({ message: 'Внутренняя ошибка сервера' }));
+    .then((cards) => res.send({ data: cards }))
+    .catch(() => res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' }));
 };
+
 //  Удалить карточку
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
@@ -33,11 +38,11 @@ const deleteCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Карточка с указанным ID не найдена' });
-      } else if (404) {
-        res.status(404).send({ message: 'Данная страница не найдена' });
+        res.status(INCORRECT_DATA).send({ message: 'Некорректный ID карточки' });
+      } else if (err.status === NOT_FOUND) {
+        res.status(NOT_FOUND).send({ message: 'Данная карточка не найдена' });
       } else {
-        res.status(500).send({ message: 'Внутренняя ошибка сервера' });
+        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
       }
     });
 };
@@ -52,11 +57,11 @@ const likeCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Карточка с указанным ID не найдена' });
-      } else if (404) {
-        res.status(404).send({ message: 'Данная страница не найдена' });
+        res.status(INCORRECT_DATA).send({ message: 'Некорректный ID карточки' });
+      } else if (err.status === NOT_FOUND) {
+        res.status(NOT_FOUND).send({ message: 'Данная страница не найдена' });
       } else {
-        res.status(500).send({ message: 'Внутренняя ошибка сервера' });
+        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
       }
     });
 };
@@ -70,11 +75,11 @@ const removeLike = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Карточка с указанным ID не найдена' });
-      } else if (404) {
-        res.status(404).send({ message: 'Данная страница не найдена' });
+        res.status(INCORRECT_DATA).send({ message: 'Некорректный ID карточки' });
+      } else if (NOT_FOUND) {
+        res.status(err.status === NOT_FOUND).send({ message: 'Данная страница не найдена' });
       } else {
-        res.status(500).send({ message: 'Внутренняя ошибка сервера' });
+        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
       }
     });
 };
