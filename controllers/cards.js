@@ -76,8 +76,8 @@ const removeLike = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(INCORRECT_DATA).send({ message: 'Некорректный ID карточки' });
-      } else if (NOT_FOUND) {
-        res.status(err.status === NOT_FOUND).send({ message: 'Данная страница не найдена' });
+      } else if (err.status === NOT_FOUND) {
+        res.status(NOT_FOUND).send({ message: 'Данная страница не найдена' });
       } else {
         res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
       }
