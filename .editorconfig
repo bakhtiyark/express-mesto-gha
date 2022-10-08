@@ -20,6 +20,7 @@ end_of_line = lf
 # File character encoding
 # Possible values - latin1, utf-8, utf-16be, utf-16le
 charset = utf-8
+end_of_line = lf
 
 # Denotes whether to trim whitespace at the end of lines
 # Possible values - true, false
