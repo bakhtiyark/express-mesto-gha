@@ -23,9 +23,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Роутинг
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
+// Заглушка
 app.use('/*', (req, res) => {
   res.status(404).json({ message: 'Запрашиваемая страница не найдена.' });
 });
