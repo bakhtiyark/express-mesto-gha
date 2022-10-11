@@ -1,4 +1,7 @@
+const bcrypt = require('bcryptjs'); // импортируем bcrypt
 const User = require('../models/user');
+const jwt = require('jsonwebtoken')
+
 const { NotFound } = require('../errors/NotFound');
 const {
   NOT_FOUND,
