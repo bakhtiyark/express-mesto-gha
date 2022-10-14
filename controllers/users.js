@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs'); // импортируем bcrypt
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const jwt = require('jsonwebtoken')
 
 const { NotFound } = require('../errors/NotFound');
 const {
@@ -22,6 +22,10 @@ const createUser = (req, res) => {
       }
     });
 };
+
+// Логин
+
+// const login = ({data}) =>{}
 
 // Получение конкретного пользователя
 const getUser = (req, res) => {
