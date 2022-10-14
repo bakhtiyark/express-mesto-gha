@@ -10,22 +10,33 @@ const {
 } = require('../utils/constants');
 
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
-  User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(INCORRECT_DATA).send({ message: 'Одно из полей не заполнено' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
-      }
-    });
+  bcrypt.hash(password, 10).then((hash) => {
+    User.create({
+      name, about, avatar, email, password: hash,
+    })
+      .then(({
+        name, about, _id, avatar, createdAt, email,
+      }) => res.send({
+        name, about, _id, avatar, createdAt, email,
+      }))
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          res.status(INCORRECT_DATA).send({ message: 'Одно из полей не заполнено' });
+        } else {
+          res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+        }
+      });
+  });
 };
 
 // Логин
-
-// const login = ({data}) =>{}
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+};
 
 // Получение конкретного пользователя
 const getUser = (req, res) => {
