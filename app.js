@@ -2,6 +2,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+const { auth } = require('./middlewares/auth');
+const { login } = require('./controllers/users');
+
 // Порт
 const { PORT = 3000 } = process.env;
 
@@ -26,6 +29,11 @@ app.use((req, res, next) => {
 // Роутинг
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
+
+// auth
+app.use(auth);
+
+app.post('/signup', login);
 
 // Заглушка
 app.use('/*', (req, res) => {
