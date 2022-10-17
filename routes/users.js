@@ -1,4 +1,7 @@
 const router = require('express').Router();
+const { celebrate, Joi } = require('celebrate');
+const { regexpLink } = require('../utils/constants');
+
 const {
   createUser,
   getUsers,
@@ -10,16 +13,33 @@ const {
 // Создание пользователя
 router.post('/', createUser);
 
-// Получениеи данных конкретного пользователя по ID
-router.get('/:userId', getUser);
+// Получение данных текущего
+router.get('/me', celebrate({
+  params: Joi.object.keys({
+    userId: Joi.string.alphanum().length(24),
+  }),
+}), getUser);
+
+// Получение данных конкретного пользователя по ID
+router.get('/:userId', celebrate({
+  params: Joi.object.keys({
+    userId: Joi.string.alphanum().length(24),
+  }),
+}), getUser);
 
 // Получение данных всех пользователей
 router.get('/', getUsers);
 
 // Обновление данных пользователя
-router.patch('/me', patchUser);
+router.patch('/me', celebrate({
+  body: Joi.object.keys({
+    name: Joi.string().required(false).min(2).max(30),
+    about: Joi.string().required(false).min(2).max(30),
+    avatar: Joi.string().required(false).pattern(regexpLink),
+  }),
+}), patchUser);
 
-// Замен аватара
+// Замена аватара
 router.patch('/me/avatar', patchAvatar);
 
 module.exports.userRouter = router;

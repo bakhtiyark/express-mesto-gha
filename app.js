@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const { auth } = require('./middlewares/auth');
-const { login } = require('./controllers/users');
+const { login, createUser } = require('./controllers/users');
 
 // Порт
 const { PORT = 3000 } = process.env;

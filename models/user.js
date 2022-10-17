@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-
-const regexp = /^(https?:\/\/)?([\w]{1,32}\.[\w]{1,32})[^]*$/gm;
+const { regexpLink } = require('../utils/constants');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -20,7 +19,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator: (value) => regexp.test(value),
+      validator: (value) => regexpLink.test(value),
       message: () => 'Некорректная ссылка',
     },
   },
