@@ -8,6 +8,7 @@ const {
   NOT_FOUND,
   INCORRECT_DATA,
   SERVER_ERROR,
+  REGISTERED_ERROR,
 } = require('../utils/constants');
 
 // Создание юзера
@@ -32,6 +33,8 @@ const createUser = (req, res) => {
       .catch((err) => {
         if (err.name === 'ValidationError') {
           res.status(INCORRECT_DATA).send({ message: 'Одно из полей не заполнено' });
+        } else if (err.code === REGISTERED_ERROR) {
+          res.status(REGISTERED_ERROR).send({ message: 'Пользователь с таким емейлом уже зарегистрирован' });
         } else {
           res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
         }
