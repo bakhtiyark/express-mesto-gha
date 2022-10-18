@@ -1,6 +1,7 @@
 // Модули
 const express = require('express');
 const mongoose = require('mongoose');
+const { celebrate, Joi } = require('celebrate');
 
 const { auth } = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
@@ -31,7 +32,7 @@ app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
 // auth
-app.use(auth);
+// app.use(auth);
 
 app.post('/signup', login);
 
