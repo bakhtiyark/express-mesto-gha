@@ -36,6 +36,10 @@ router.patch('/me', celebrate({
 }), patchUser);
 
 // Замена аватара
-router.patch('/me/avatar', patchAvatar);
+router.patch('/me/avatar', celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().required(true).pattern(regexpLink),
+  }),
+}), patchAvatar);
 
 module.exports.userRouter = router;

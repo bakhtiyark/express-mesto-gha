@@ -14,7 +14,7 @@ const {
 router.post('/', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(true),
-    link: Joi.string().required(true),
+    link: Joi.string().required(true).pattern(regexpLink),
   }),
 }), createCard);
 

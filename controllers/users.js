@@ -4,6 +4,7 @@ const User = require('../models/user');
 
 const { AuthorizationError } = require('../errors/AuthorizationError');
 const { NotFound } = require('../errors/NotFound');
+const { ValidationError } = require('../errors/ValidationError');
 const {
   NOT_FOUND,
   INCORRECT_DATA,
@@ -94,15 +95,14 @@ const getUsers = (req, res) => {
 const patchUser = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .then((user) => {
-      if (!user) {
-        res.status(NOT_FOUND).send({ message: 'Пользователь не найден.' });
-      } else {
-        res.send(user);
-      }
-    }).catch((err) => {
+    .orFail(new ValidationError('Пользователь не найден'))
+    .then((user) => res.send({ data: user })).catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(INCORRECT_DATA).send({ message: 'Некорректные данные пользователя' });
+      } else if (err.name === 'CastError') {
+        res.status(INCORRECT_DATA).send({ message: 'Некорректный ID пользователя' });
+      } else if (err.code === 404) {
+        res.status(NOT_FOUND).send({ message: 'Запрашиваемая страница не найдена' });
       } else {
         res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
       }
@@ -110,10 +110,14 @@ const patchUser = (req, res) => {
 };
 
 // Обновление аватара
-const patchAvatar = (req, res) => {
-  const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .then((user) => {
+const patchAvatar = (req, res, next) => {
+  const { owner } = req.user._id;
+  User.findByIdAndUpdate(owner, { avatar: req.body.avatar }, { new: true, runValidators: true })
+    .orFail(new NotFound('Пользователь не найден'))
+    .then((user) => res.send({ data: user }))
+    .catch(next);
+
+  /* .then((user) => {
       if (!user) {
         res.status(NOT_FOUND).send({ message: 'Пользователь не найден.' });
       } else {
@@ -125,7 +129,7 @@ const patchAvatar = (req, res) => {
       } else {
         res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
       }
-    });
+    }) */
 };
 
 module.exports = {
