@@ -36,7 +36,7 @@ router.patch('/me', celebrate({
 }), patchUser);
 
 // Замена аватара
-router.patch('/me/avatar', celebrate({
+router.patch('/me', celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().required(true).pattern(regexpLink),
   }),
