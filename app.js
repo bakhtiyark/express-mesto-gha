@@ -13,6 +13,7 @@ const { PORT = 3000 } = process.env;
 // Роутеры
 const { cardRouter } = require('./routes/cards');
 const { userRouter } = require('./routes/users');
+const { NotFound } = require('./errors/NotFound');
 
 const app = express();
 
@@ -42,13 +43,19 @@ app.post('/signup', celebrate({
     password: Joi.string().required(false).min(4),
   }),
 }), createUser);
-// app.use(auth);
 
-app.post('/signup', login);
+app.use(auth);
+
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required(true).email(),
+    password: Joi.string().required(true),
+  }),
+}), login);
 
 // Заглушка
-app.use('/*', (req, res) => {
-  res.status(404).json({ message: 'Запрашиваемая страница не найдена.' });
+app.use('/*', (next) => {
+  next(new NotFound('Запрашиваемая страница не найдена'));
 });
 
 app.listen(PORT);

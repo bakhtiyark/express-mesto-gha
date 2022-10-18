@@ -11,13 +11,16 @@ const {
   REGISTERED_ERROR,
 } = require('../utils/constants');
 
+// bcrypt-linked
+const salt = 10;
+
 // Создание юзера
 const createUser = (req, res) => {
 /* const {
     name, about, avatar, email, password,
   } = req.body;
 */
-  bcrypt.hash(req.body.password, 10).then((hash) => {
+  bcrypt.hash(req.body.password, salt).then((hash) => {
     User.create({
       name: req.body.name,
       about: req.body.about,
