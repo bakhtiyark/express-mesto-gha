@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
+const { regexpLink } = require('./utils/constants');
 
 const { auth } = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
@@ -32,6 +33,15 @@ app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
 // auth
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required(false).min(2).max(30),
+    about: Joi.string().required(false).min(2).max(30),
+    avatar: Joi.string().required(false).pattern(regexpLink),
+    email: Joi.string().required(false).email(),
+    password: Joi.string().required(false).min(4),
+  }),
+}), createUser);
 // app.use(auth);
 
 app.post('/signup', login);

@@ -3,15 +3,11 @@ const { celebrate, Joi } = require('celebrate');
 const { regexpLink } = require('../utils/constants');
 
 const {
-  createUser,
   getUsers,
   getUser,
   patchUser,
   patchAvatar,
 } = require('../controllers/users');
-
-// Создание пользователя
-router.post('/', createUser);
 
 // Получение данных текущего
 router.get('/me', celebrate({
