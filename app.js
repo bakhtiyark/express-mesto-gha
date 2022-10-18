@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
 const { regexpLink } = require('./utils/constants');
 
-const { auth } = require('./middlewares/auth');
+const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 
 // Порт
