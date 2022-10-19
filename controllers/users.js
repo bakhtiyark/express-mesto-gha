@@ -58,28 +58,6 @@ const getCurrentUser = (res, req, next) => {
     }).catch(next);
 };
 
-// Логин
-const login = (req, res, next) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    throw new AuthorizationError({ message: 'Неверный логин или пароль' });
-  }
-  return User.findOne({ email }).select('+password')
-    .then((user) => {
-      if (!user) {
-        throw new AuthorizationError({ message: 'Неверный логин или пароль' });
-      }
-      bcrypt.compare(password, user.password, (err, isValidPassword) => {
-        if (!isValidPassword) {
-          throw new AuthorizationError({ message: 'Неверный логин или пароль' });
-        }
-        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '3600' });
-        return res.status(200).send({ token });
-      });
-    })
-    .catch(next);
-};
-
 // Получение конкретного пользователя /users/:userId
 const getUser = (req, res) => {
   User.findById(req.params.userId)
@@ -104,19 +82,15 @@ const getUsers = (req, res) => {
 };
 
 // Обновление данных пользователя
-const patchUser = (req, res) => {
-  const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+const patchUser = (req, res, next) => {
+  const { name, about, avatar } = req.body;
+  User.findByIdAndUpdate(req.user._id, { name, about, avatar }, { new: true, runValidators: true })
     .orFail(new ValidationError('Пользователь не найден'))
     .then((user) => res.send({ data: user })).catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(INCORRECT_DATA).send({ message: 'Некорректные данные пользователя' });
-      } else if (err.name === 'CastError') {
-        res.status(INCORRECT_DATA).send({ message: 'Некорректный ID пользователя' });
-      } else if (err.code === 404) {
-        res.status(NOT_FOUND).send({ message: 'Запрашиваемая страница не найдена' });
+      if (err.code === 11000) {
+        res.status(REGISTERED_ERROR).json({ message: 'Пользователь уже существует' });
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+        next(err);
       }
     });
 };
@@ -144,6 +118,27 @@ const patchAvatar = (req, res, next) => {
     }) */
 };
 
+// Логин
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    throw new AuthorizationError({ message: 'Неверный логин или пароль' });
+  }
+  return User.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        throw new AuthorizationError({ message: 'Неверный логин или пароль' });
+      }
+      bcrypt.compare(password, user.password, (err, isValidPassword) => {
+        if (!isValidPassword) {
+          throw new AuthorizationError({ message: 'Неверный логин или пароль' });
+        }
+        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '3600' });
+        return res.status(200).send({ token });
+      });
+    })
+    .catch(next);
+};
 module.exports = {
   createUser,
   getUsers,

@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
+const bodyParser = require('body-parser');
 const { regexpLink } = require('./utils/constants');
 
 const auth = require('./middlewares/auth');
@@ -19,7 +20,11 @@ const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use(express.json());
+// app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true,
+}));
 /*
 app.use((req, res, next) => {
   req.user = {
@@ -29,9 +34,6 @@ app.use((req, res, next) => {
   next();
 });
 */
-// Роутинг
-app.use('/users', userRouter);
-app.use('/cards', cardRouter);
 
 // reg
 app.post('/signup', celebrate({
@@ -54,6 +56,10 @@ app.post('/signin', celebrate({
     password: Joi.string().required(true),
   }),
 }), login);
+
+// Роутинг
+app.use('/users', userRouter);
+app.use('/cards', cardRouter);
 
 // Заглушка
 app.use('/*', (res) => {
