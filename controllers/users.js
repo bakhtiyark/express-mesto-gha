@@ -2,9 +2,9 @@ const bcrypt = require('bcryptjs'); // импортируем bcrypt
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-const { AuthorizationError } = require('../errors/AuthorizationError');
-const { NotFound } = require('../errors/NotFound');
-const { ValidationError } = require('../errors/ValidationError');
+const AuthorizationError = require('../errors/AuthorizationError');
+const NotFound = require('../errors/NotFound');
+const ValidationError = require('../errors/ValidationError');
 const {
   NOT_FOUND,
   INCORRECT_DATA,

@@ -13,7 +13,7 @@ const { PORT = 3000 } = process.env;
 // Роутеры
 const { cardRouter } = require('./routes/cards');
 const { userRouter } = require('./routes/users');
-const NotFound = require('./errors/NotFound');
+// const NotFound = require('./errors/NotFound');
 
 const app = express();
 
@@ -56,8 +56,8 @@ app.post('/signin', celebrate({
 }), login);
 
 // Заглушка
-app.use('/*', (next) => {
-  next(new NotFound('Запрашиваемая страница не найдена'));
+app.use('/*', (res) => {
+  res.status(404).json({ message: 'Запрашиваемый ресурс не найден' });
 });
 
 app.listen(PORT);
