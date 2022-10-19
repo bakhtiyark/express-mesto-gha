@@ -7,6 +7,7 @@ const {
   getUser,
   patchUser,
   patchAvatar,
+  getCurrentUser,
 } = require('../controllers/users');
 
 // Получение данных текущего
@@ -14,17 +15,7 @@ router.get('/me', celebrate({
   params: Joi.object().keys({
     userId: Joi.string().alphanum().length(24),
   }),
-}), getUser);
-
-// Получение данных конкретного пользователя по ID
-router.get('/:userId', celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().alphanum().length(24),
-  }),
-}), getUser);
-
-// Получение данных всех пользователей
-router.get('/', getUsers);
+}), getCurrentUser);
 
 // Обновление данных пользователя
 router.patch('/me', celebrate({
@@ -36,10 +27,20 @@ router.patch('/me', celebrate({
 }), patchUser);
 
 // Замена аватара
-router.patch('/me', celebrate({
+router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().required(true).pattern(regexpLink),
   }),
 }), patchAvatar);
+
+// Получение данных конкретного пользователя по ID
+router.get('/:userId', celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().alphanum().length(24),
+  }),
+}), getUser);
+
+// Получение данных всех пользователей
+router.get('/', getUsers);
 
 module.exports.userRouter = router;

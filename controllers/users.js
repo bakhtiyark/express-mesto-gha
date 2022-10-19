@@ -1,10 +1,14 @@
+// Модули
 const bcrypt = require('bcryptjs'); // импортируем bcrypt
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
+// Ошибки
 const AuthorizationError = require('../errors/AuthorizationError');
 const NotFound = require('../errors/NotFound');
 const ValidationError = require('../errors/ValidationError');
+
+// Коды
 const {
   NOT_FOUND,
   INCORRECT_DATA,
@@ -16,34 +20,42 @@ const {
 const salt = 10;
 
 // Создание юзера
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
 /* const {
     name, about, avatar, email, password,
   } = req.body;
 */
-  bcrypt.hash(req.body.password, salt).then((hash) => {
-    User.create({
-      name: req.body.name,
-      about: req.body.about,
-      avatar: req.body.avatar,
-      email: req.body.email,
-      password: hash,
-    })
-      .then(({
-        name, about, _id, avatar, createdAt, email,
-      }) => res.send({
-        name, about, _id, avatar, createdAt, email,
-      }))
-      .catch((err) => {
-        if (err.name === 'ValidationError') {
-          res.status(INCORRECT_DATA).send({ message: 'Одно из полей не заполнено' });
-        } else if (err.code === REGISTERED_ERROR) {
-          res.status(REGISTERED_ERROR).send({ message: 'Пользователь с таким емейлом уже зарегистрирован' });
-        } else {
-          res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
-        }
-      });
-  });
+  bcrypt.hash(req.body.password, salt)
+    .then((hash) => {
+      User.create({
+        name: req.body.name,
+        about: req.body.about,
+        avatar: req.body.avatar,
+        email: req.body.email,
+        password: hash,
+      })
+        .then(({
+          name, about, _id, avatar, createdAt, email,
+        }) => res.send({
+          name, about, _id, avatar, createdAt, email,
+        }))
+        .catch((err) => {
+          if (err.code === 11000) {
+            res.status(REGISTERED_ERROR).json({ message: 'Пользователь уже существует' });
+          } else {
+            next(err);
+          }
+        });
+    });
+};
+// GET ME
+const getCurrentUser = (res, req, next) => {
+  const ownerId = req.user._id;
+  User.findById(ownerId)
+    .orFail(new NotFound('Пользователь не найден'))
+    .then((user) => {
+      res.send({ data: user });
+    }).catch(next);
 };
 
 // Логин
@@ -68,7 +80,7 @@ const login = (req, res, next) => {
     .catch(next);
 };
 
-// Получение конкретного пользователя
+// Получение конкретного пользователя /users/:userId
 const getUser = (req, res) => {
   User.findById(req.params.userId)
     .orFail(new NotFound('ID пользователя не найден'))
@@ -139,4 +151,5 @@ module.exports = {
   patchUser,
   patchAvatar,
   login,
+  getCurrentUser,
 };
