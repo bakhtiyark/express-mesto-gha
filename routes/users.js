@@ -5,17 +5,13 @@ const { regexpLink } = require('../utils/constants');
 const {
   getUsers,
   getUser,
+  getCurrentUser,
   patchUser,
   patchAvatar,
-  getCurrentUser,
 } = require('../controllers/users');
 
 // Получение данных текущего
-router.get('/me', celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().alphanum().length(24),
-  }),
-}), getCurrentUser);
+router.get('/me', getCurrentUser);
 
 // Обновление данных пользователя
 router.patch('/me', celebrate({
