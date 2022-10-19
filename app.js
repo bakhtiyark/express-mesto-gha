@@ -65,7 +65,7 @@ app.use('/*', (res) => {
 });
 app.use(errors());
 
-app.use((err, res, next) => {
+app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   if (isCelebrateError(err)) {
     res.status(statusCode).json(err);

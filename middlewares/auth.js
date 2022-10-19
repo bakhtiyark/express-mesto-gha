@@ -4,7 +4,7 @@ const AuthorizationError = require('../errors/AuthorizationError');
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization || authorization.startsWith('Bearer ')) {
-    throw new AuthorizationError({ message: 'Необходимо залогиниться' });
+    throw new AuthorizationError('Необходимо залогиниться');
   }
   const token = authorization.replace('Bearer ', '');
 
@@ -14,7 +14,7 @@ module.exports = (req, res, next) => {
     // попытаемся верифицировать токен
     payload = jwt.verify(token, 'some-secret-key');
   } catch (err) {
-    throw new AuthorizationError({ message: 'Необходимо залогиниться' });
+    next(new AuthorizationError('Необходимо залогиниться'));
   }
   req.user = payload;
 
