@@ -20,11 +20,8 @@ const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-// app.use(express.json());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true,
-}));
+app.use(express.json());
+
 /*
 app.use((req, res, next) => {
   req.user = {
@@ -33,6 +30,10 @@ app.use((req, res, next) => {
 
   next();
 });
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true,
+}));
 */
 
 // reg
