@@ -1,6 +1,6 @@
 //  Импорт модели
 const Card = require('../models/card');
-const NotFound = require('../errors/NotFound');
+const { NotFound } = require('../errors/NotFound');
 
 const {
   NOT_FOUND,
