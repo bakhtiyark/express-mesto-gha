@@ -39,4 +39,4 @@ router.get('/:userId', celebrate({
 // Получение данных всех пользователей
 router.get('/', getUsers);
 
-module.exports.userRouter = router;
+module.exports = router;

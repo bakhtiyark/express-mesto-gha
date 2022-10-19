@@ -12,9 +12,6 @@ const { login, createUser } = require('./controllers/users');
 const { PORT = 3000 } = process.env;
 const app = express();
 
-// Роутеры
-const cardRouter = require('./routes/cards');
-const userRouter = require('./routes/users');
 // const NotFound = require('./errors/NotFound');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
@@ -57,8 +54,8 @@ app.post('/signin', celebrate({
 }), login);
 
 // Роутинг
-app.use('/users', userRouter);
-app.use('/cards', cardRouter);
+app.use('/users', require('./routes/users'));
+app.use('/cards', require('./routes/cards'));
 
 // Заглушка
 app.use('/*', (res) => {

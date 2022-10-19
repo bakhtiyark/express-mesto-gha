@@ -42,4 +42,4 @@ router.delete('/:cardId/likes', celebrate({
   }),
 }), removeLike);
 
-module.exports.cardRouter = router;
+module.exports = router;
