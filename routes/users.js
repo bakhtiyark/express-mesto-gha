@@ -10,8 +10,18 @@ const {
   patchAvatar,
 } = require('../controllers/users');
 
+// Получение данных всех пользователей
+router.get('/', getUsers);
+
 // Получение данных текущего
 router.get('/me', getCurrentUser);
+
+// Получение данных конкретного пользователя по ID
+router.get('/:userId', celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().alphanum().length(24),
+  }),
+}), getUser);
 
 // Обновление данных пользователя
 router.patch('/me', celebrate({
@@ -28,15 +38,5 @@ router.patch('/me/avatar', celebrate({
     avatar: Joi.string().required(true).pattern(regexpLink),
   }),
 }), patchAvatar);
-
-// Получение данных конкретного пользователя по ID
-router.get('/:userId', celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().alphanum().length(24),
-  }),
-}), getUser);
-
-// Получение данных всех пользователей
-router.get('/', getUsers);
 
 module.exports = router;

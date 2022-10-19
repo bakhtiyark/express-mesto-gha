@@ -77,7 +77,7 @@ const getUser = (req, res) => {
 // Получить данные всех юзеров
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => res.send({ data: user }))
     .catch(next);
 };
 
@@ -122,16 +122,16 @@ const patchAvatar = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    throw new AuthorizationError('Неверный логин или пароль');
+    throw new AuthorizationError({ message: 'Неверный логин или пароль' });
   }
   return User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new AuthorizationError('Неверный логин или пароль');
+        throw new AuthorizationError({ message: 'Неверный логин или пароль' });
       }
       bcrypt.compare(password, user.password, (err, isValidPassword) => {
         if (!isValidPassword) {
-          throw new AuthorizationError('Неверный логин или пароль');
+          throw new AuthorizationError({ message: 'Неверный логин или пароль' });
         }
         const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '3600' });
         return res.status(200).send({ token });
