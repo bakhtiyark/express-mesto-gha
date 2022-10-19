@@ -7,6 +7,4 @@ class ValidationError extends Error {
     this.statusCode = 400;
   }
 }
-module.exports = {
-  ValidationError,
-};
+module.exports = ValidationError;

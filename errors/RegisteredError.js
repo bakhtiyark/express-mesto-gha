@@ -7,6 +7,4 @@ class RegisteredError extends Error {
     this.statusCode = 409;
   }
 }
-module.exports = {
-  RegisteredError,
-};
+module.exports = RegisteredError;

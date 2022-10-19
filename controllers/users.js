@@ -4,9 +4,9 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 // Ошибки
-const { AuthorizationError } = require('../errors/AuthorizationError');
-const { NotFound } = require('../errors/NotFound');
-const { ValidationError } = require('../errors/ValidationError');
+const AuthorizationError = require('../errors/AuthorizationError');
+const NotFound = require('../errors/NotFound');
+const ValidationError = require('../errors/ValidationError');
 
 // Коды
 const {

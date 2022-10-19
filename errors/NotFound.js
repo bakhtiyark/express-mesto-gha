@@ -6,6 +6,4 @@ class NotFound extends Error {
     this.statusCode = 404;
   }
 }
-module.exports = {
-  NotFound,
-};
+module.exports = NotFound;

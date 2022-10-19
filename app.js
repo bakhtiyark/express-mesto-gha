@@ -1,7 +1,9 @@
 // Модули
 const express = require('express');
 const mongoose = require('mongoose');
-const { celebrate, Joi } = require('celebrate');
+const {
+  celebrate, errors, Joi, isCelebrateError,
+} = require('celebrate');
 const bodyParser = require('body-parser');
 const { regexpLink } = require('./utils/constants');
 
@@ -34,11 +36,11 @@ app.use((req, res, next) => {
 // reg
 app.post('/signup', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required(false).min(2).max(30),
-    about: Joi.string().required(false).min(2).max(30),
-    avatar: Joi.string().required(false).pattern(regexpLink),
-    email: Joi.string().required(true).email(),
-    password: Joi.string().required(true),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().pattern(regexpLink),
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
   }),
 }), createUser);
 
@@ -60,6 +62,17 @@ app.use('/cards', require('./routes/cards'));
 // Заглушка
 app.use('/*', (res) => {
   res.status(404).json({ message: 'Запрашиваемый ресурс не найден' });
+});
+app.use(errors());
+
+app.use((err, res, next) => {
+  const { statusCode = 500, message } = err;
+  if (isCelebrateError(err)) {
+    res.status(statusCode).json(err);
+  } else {
+    res.status(statusCode).json({ message: statusCode === 500 ? 'Внутренняя ошибка сервера' : message });
+  }
+  next();
 });
 
 app.listen(PORT);

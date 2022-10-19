@@ -7,6 +7,4 @@ class AuthorizationError extends Error {
     this.statusCode = 401;
   }
 }
-module.exports = {
-  AuthorizationError,
-};
+module.exports = AuthorizationError;
