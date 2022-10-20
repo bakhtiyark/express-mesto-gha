@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 // Ошибки
-// const AuthorizationError = require('../errors/AuthorizationError');
+const AuthorizationError = require('../errors/AuthorizationError');
 const NotFound = require('../errors/NotFound');
 const ValidationError = require('../errors/ValidationError');
 
@@ -118,17 +118,14 @@ const patchAvatar = (req, res, next) => {
 // Логин
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  if (!email || !password) {
-    throw new ValidationError('Неверный логин или пароль');
-  }
   return User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new ValidationError('Неверный логин или пароль');
+        throw new AuthorizationError('Неверный логин или пароль');
       }
       bcrypt.compare(password, user.password, (err, isValidPassword) => {
         if (!isValidPassword) {
-          throw new ValidationError('Неверный логин или пароль');
+          throw new AuthorizationError('Неверный логин или пароль');
         }
         const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '72h' });
         return res.status(200).send({ token });
@@ -136,6 +133,7 @@ const login = (req, res, next) => {
     })
     .catch(next);
 };
+
 module.exports = {
   createUser,
   getUsers,

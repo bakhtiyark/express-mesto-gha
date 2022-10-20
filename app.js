@@ -1,5 +1,6 @@
 // Модули
 const express = require('express');
+const path = require('path');
 const mongoose = require('mongoose');
 const {
   celebrate, errors, Joi, isCelebrateError,
@@ -13,7 +14,7 @@ const { login, createUser } = require('./controllers/users');
 // Порт
 const { PORT = 3000 } = process.env;
 const app = express();
-
+app.use(express.static(path.join(__dirname, 'public')));
 // const NotFound = require('./errors/NotFound');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
