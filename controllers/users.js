@@ -122,13 +122,21 @@ const patchAvatar = (req, res, next) => {
 // Логин
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
+  return User.findOne({ email }).select('+password')
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '72h' });
-      res.status(200).send({ token });
-    })
-    .catch(() => {
-      next(new AuthorizationError('Неверный логин или пароль'));
+      if (!user) {
+        throw new AuthorizationError('Неверный логин или пароль');
+      }
+      return bcrypt.compare(password, user.password).then((isValidPassword) => {
+        if (!isValidPassword) {
+          throw new AuthorizationError('Неверный логин или пароль');
+        }
+      }).then(() => {
+        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '72h' });
+        return res.status(200).send({ token });
+      }).catch(() => {
+        next(new AuthorizationError('Неверный логин или пароль'));
+      });
     });
 };
 
