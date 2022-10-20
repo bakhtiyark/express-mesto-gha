@@ -127,12 +127,12 @@ const login = (req, res, next) => {
       if (!user) {
         throw new AuthorizationError('Неверный логин или пароль');
       }
-      return bcrypt.compare(password, user.password).then((isValidPassword) => {
+      bcrypt.compare(password, user.password, (err, isValidPassword) => {
         if (!isValidPassword) {
           throw new AuthorizationError('Неверный логин или пароль');
         }
         const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '72h' });
-        res.status(200).send({ token });
+        return res.status(200).send({ token });
       }).catch(() => {
         next(new AuthorizationError('Неверный логин или пароль'));
       });
