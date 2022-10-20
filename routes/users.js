@@ -26,16 +26,16 @@ router.get('/:userId', celebrate({
 // Обновление данных пользователя
 router.patch('/me', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required(false).min(2).max(30),
-    about: Joi.string().required(false).min(2).max(30),
-    avatar: Joi.string().required(false).pattern(regexpLink),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().pattern(regexpLink),
   }),
 }), patchUser);
 
 // Замена аватара
 router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required(true).pattern(regexpLink),
+    avatar: Joi.string().required().pattern(regexpLink),
   }),
 }), patchAvatar);
 

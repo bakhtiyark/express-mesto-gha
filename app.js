@@ -7,8 +7,6 @@ const {
 } = require('celebrate');
 const bodyParser = require('body-parser');
 const { regexpLink } = require('./utils/constants');
-
-const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 
 // Порт
@@ -34,6 +32,7 @@ app.use((req, res, next) => {
 });
 */
 
+app.use(require('./middlewares/auth'));
 // signin
 
 app.post('/signin', celebrate({
@@ -54,7 +53,6 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-app.use(auth);
 // Роутинг
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));

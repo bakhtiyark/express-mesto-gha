@@ -67,8 +67,13 @@ const getUser = (req, res, next) => {
       throw new NotFound('Пользователь не найден');
     }
     res.send({ data: user });
-  })
-    .catch(next);
+  }).catch((err) => {
+    if (err.name === 'CastError') {
+      next(new NotFound('Пользователь не найден'));
+    } else {
+      next(err);
+    }
+  });
 };
 
 // Получить данные всех юзеров
