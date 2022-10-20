@@ -16,6 +16,12 @@ const {
 // bcrypt-linked
 const salt = 10;
 
+// Получить данные всех юзеров
+const getUsers = (req, res, next) => {
+  User.find({})
+    .then((user) => res.send({ data: user }))
+    .catch(next);
+};
 // Создание юзера
 const createUser = (req, res, next) => {
 /* const {
@@ -74,13 +80,6 @@ const getUser = (req, res, next) => {
       next(err);
     }
   });
-};
-
-// Получить данные всех юзеров
-const getUsers = (req, res, next) => {
-  User.find({})
-    .then((user) => res.send({ data: user }))
-    .catch(next);
 };
 
 // Обновление данных пользователя

@@ -60,7 +60,7 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 // Заглушка
-app.use('/*', (res) => {
+app.use('/*', (req, res) => {
   res.status(404).json({ message: 'Запрашиваемый ресурс не найден' });
 });
 app.use(errors());
