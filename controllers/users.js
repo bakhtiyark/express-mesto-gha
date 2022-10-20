@@ -133,9 +133,7 @@ const login = (req, res, next) => {
         }
         const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '72h' });
         return res.status(200).send({ token });
-      }).catch(() => {
-        next(new AuthorizationError('Неверный логин или пароль'));
-      });
+      }).catch(next);
     });
 };
 
