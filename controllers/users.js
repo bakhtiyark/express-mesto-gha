@@ -56,6 +56,9 @@ const getCurrentUser = (res, req, next) => {
   User.findById(ownerId)
     .orFail(new NotFound('Пользователь не найден'))
     .then((user) => {
+      if (!user) {
+        throw NotFound('Пользователь не найден');
+      }
       res.send({ data: user });
     }).catch(next);
 };

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-const { regexpLink } = require('../utils/constants');
+// const { regexpLink } = require('../utils/constants');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -18,10 +18,6 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    validate: {
-      validator: (value) => regexpLink.test(value),
-      message: () => 'Некорректная ссылка',
-    },
   },
   email: {
     type: String,
@@ -29,13 +25,13 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: (x) => validator.isEmail(x),
-      message: () => 'Некорректный адрес email',
+      message: ({ email }) => `${email} - Некорректный email`,
     },
   },
   password: {
     type: String,
     required: true,
-    minlength: 8,
+    select: false,
   },
 });
 
