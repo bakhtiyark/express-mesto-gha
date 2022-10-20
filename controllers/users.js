@@ -10,9 +10,6 @@ const ValidationError = require('../errors/ValidationError');
 
 // Коды
 const {
-  NOT_FOUND,
-  INCORRECT_DATA,
-  SERVER_ERROR,
   REGISTERED_ERROR,
 } = require('../utils/constants');
 
@@ -64,19 +61,14 @@ const getCurrentUser = (res, req, next) => {
 };
 
 // Получение конкретного пользователя /users/:userId
-const getUser = (req, res) => {
-  User.findById(req.params.userId)
-    .orFail(new NotFound('ID пользователя не найден'))
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(INCORRECT_DATA).send({ message: 'Некорректный ID пользователя' });
-      } else if (err.status === NOT_FOUND) {
-        res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
-      }
-    });
+const getUser = (req, res, next) => {
+  User.findById(req.params.userId).then((user) => {
+    if (!user) {
+      throw new NotFound('Пользователь не найден');
+    }
+    res.send({ data: user });
+  })
+    .catch(next);
 };
 
 // Получить данные всех юзеров
@@ -138,7 +130,7 @@ const login = (req, res, next) => {
         if (!isValidPassword) {
           throw new ValidationError('Неверный логин или пароль');
         }
-        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '3600' });
+        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '72h' });
         return res.status(200).send({ token });
       });
     })
