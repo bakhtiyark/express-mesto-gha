@@ -42,6 +42,8 @@ const createUser = (req, res, next) => {
         .catch((err) => {
           if (err.code === 11000) {
             res.status(REGISTERED_ERROR).json({ message: 'Пользователь уже существует' });
+          } else if (err.name === 'ValidationError') {
+            next(new ValidationError('Неверный логин или пароль'));
           } else {
             next(err);
           }
