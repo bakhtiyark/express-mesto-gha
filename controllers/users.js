@@ -114,19 +114,17 @@ const login = (req, res, next) => {
   return User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new AuthorizationError('Неверные логин/пароль');
+        throw new AuthorizationError('Неверный логин или пароль');
       }
       bcrypt.compare(password, user.password, (err, isValidPassword) => {
         if (!isValidPassword) {
-          throw new AuthorizationError('Неверные логин/пароль');
+          throw new AuthorizationError('Неверный логин или пароль');
         }
         const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
         return res.status(200).send({ token });
       });
     })
-    .catch(() => {
-      next(new AuthorizationError('Неверные логин/пароль'));
-    });
+    .catch(next);
 };
 
 module.exports = {
