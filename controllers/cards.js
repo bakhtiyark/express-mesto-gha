@@ -1,12 +1,9 @@
 //  Импорт модели
 const Card = require('../models/card');
-const NotFound = require('../errors/NotFound');
 
-const {
-  NOT_FOUND,
-  INCORRECT_DATA,
-  SERVER_ERROR,
-} = require('../utils/constants');
+// Ошибки
+const NotFound = require('../errors/NotFound');
+const UnauthorizedError = require('../errors/UnauthorizedError');
 const ValidationError = require('../errors/ValidationError');
 
 //  Создание карты
@@ -37,23 +34,26 @@ const getCards = (req, res, next) => {
 };
 
 //  Удалить карточку
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .orFail(new NotFound('Данная карта не найдена'))
-    .then((card) => res.send({ data: card }))
+    .orFail(new NotFound('Карточка не найдена'))
+    .then((card) => {
+      if (req.user._id === card.owner.toString()) {
+        card.delete()
+          .then(() => res.status(200).json({ message: 'Карточка удалена' }));
+      } else { throw new UnauthorizedError('Удалять можно только свои карты.'); }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(INCORRECT_DATA).send({ message: 'Некорректный ID карточки' });
-      } else if (err.status === NOT_FOUND) {
-        res.status(NOT_FOUND).send({ message: 'Данная карточка не найдена' });
+        next(new NotFound('Некорректный ID'));
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+        next(err);
       }
     });
 };
 
 // Поставить лайк карточке
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -62,29 +62,25 @@ const likeCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(INCORRECT_DATA).send({ message: 'Некорректный ID карточки' });
-      } else if (err.status === NOT_FOUND) {
-        res.status(NOT_FOUND).send({ message: 'Данная страница не найдена' });
+        next(new NotFound('Карточка с указанным ID не найдена'));
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+        next(err);
       }
     });
 };
 // Удаления лайка с карты
-const removeLike = (req, res) => {
+const removeLike = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
     { new: true },
   ).orFail(() => { throw new NotFound('Карточка с указанным ID не найдена'); })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(INCORRECT_DATA).send({ message: 'Некорректный ID карточки' });
-      } else if (err.status === NOT_FOUND) {
-        res.status(NOT_FOUND).send({ message: 'Данная страница не найдена' });
+        next(new NotFound('Карточка с указанным ID не найдена'));
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+        next(err);
       }
     });
 };
