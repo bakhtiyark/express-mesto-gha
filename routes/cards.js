@@ -10,6 +10,9 @@ const {
   removeLike,
 } = require('../controllers/cards');
 
+// Получение данных всех карточек
+router.get('/', getCards);
+
 // Создание карточки
 router.post('/', celebrate({
   body: Joi.object().keys({
@@ -17,9 +20,6 @@ router.post('/', celebrate({
     link: Joi.string().required(true).pattern(regexpLink),
   }),
 }), createCard);
-
-// Получение данных всех карточек
-router.get('/', getCards);
 
 // Удаление карточки
 router.delete('/:cardId', celebrate({

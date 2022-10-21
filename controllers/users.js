@@ -131,7 +131,7 @@ const login = (req, res, next) => {
         if (!isValidPassword) {
           throw new AuthorizationError('Неверный логин или пароль');
         }
-        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '72h' });
+        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
         return res.status(200).send({ data: token });
       });
     })

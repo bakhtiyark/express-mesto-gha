@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+
 const {
   celebrate, errors, Joi, isCelebrateError,
 } = require('celebrate');
@@ -13,9 +14,11 @@ const { login, createUser } = require('./controllers/users');
 
 // Порт
 const { PORT = 3000 } = process.env;
+
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
-// const NotFound = require('./errors/NotFound');
+
+const NotFound = require('./errors/NotFound');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
@@ -59,8 +62,8 @@ app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
 // Заглушка
-app.use('/*', auth, (req, res) => {
-  res.status(404).json({ message: 'Запрашиваемый ресурс не найден' });
+app.use('/*', (req, res, next) => {
+  next(new NotFound('Запрашиваемая страница не найдена'));
 });
 app.use(errors());
 

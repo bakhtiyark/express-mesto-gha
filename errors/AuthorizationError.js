@@ -3,7 +3,7 @@
 class AuthorizationError extends Error {
   constructor(message) {
     super(message);
-    this.name = 'AuthorizationError';
+    this.name = 'RestrictedAccess';
     this.statusCode = 401;
   }
 }
