@@ -16,7 +16,7 @@ router.get('/', getCards);
 // Создание карточки
 router.post('/', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30).required(true),
+    name: Joi.string().min(2).max(30).required(),
     link: Joi.string().required(true).pattern(regexpLink),
   }),
 }), createCard);

@@ -20,22 +20,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const NotFound = require('./errors/NotFound');
 
+// Подключение базы данных
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-// app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true,
 }));
-/*
-app.use((req, res, next) => {
-  req.user = {
-    _id: '5d8b8592978f8bd833ca8133',
-  };
-
-  next();
-});
-*/
 
 // signin
 
@@ -51,11 +42,14 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(regexpLink),
+    avatar: Joi.string().regex(regexpLink),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
 }), createUser);
+
+// Авторизация
+
 app.use(auth);
 // Роутинг
 app.use('/users', require('./routes/users'));

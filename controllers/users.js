@@ -24,10 +24,6 @@ const getUsers = (req, res, next) => {
 };
 // Создание юзера
 const createUser = (req, res, next) => {
-/* const {
-    name, about, avatar, email, password,
-  } = req.body;
-*/
   bcrypt.hash(req.body.password, salt)
     .then((hash) => {
       User.create({
@@ -53,6 +49,7 @@ const createUser = (req, res, next) => {
         });
     });
 };
+
 // GET ME
 const getCurrentUser = (res, req, next) => {
   const ownerId = req.user._id;
@@ -84,12 +81,13 @@ const getUser = (req, res, next) => {
 
 // Обновление данных пользователя
 const patchUser = (req, res, next) => {
-  const { name, about, avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about, avatar }, { new: true, runValidators: true })
+  const { name, about } = req.body;
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(new ValidationError('Пользователь не найден'))
-    .then((user) => res.send({ data: user })).catch((err) => {
-      if (err.code === 11000) {
-        res.status(REGISTERED_ERROR).json({ message: 'Пользователь уже существует' });
+    .then((user) => res.send({ data: user }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new ValidationError('Некорректные данные'));
       } else {
         next(err);
       }
@@ -98,27 +96,18 @@ const patchUser = (req, res, next) => {
 
 // Обновление аватара
 const patchAvatar = (req, res, next) => {
-  const { owner } = req.user._id;
+  const owner = req.user._id;
   User.findByIdAndUpdate(owner, { avatar: req.body.avatar }, { new: true, runValidators: true })
     .orFail(new NotFound('Пользователь не найден'))
     .then((user) => res.send({ data: user }))
-    .catch(next);
-
-  /* .then((user) => {
-      if (!user) {
-        res.status(NOT_FOUND).send({ message: 'Пользователь не найден.' });
-      } else {
-        res.send(user);
-      }
-    }).catch((err) => {
+    .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(INCORRECT_DATA).send({ message: 'Некорректные данные пользователя' });
+        next(new ValidationError('Некорректные данные'));
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+        next(err);
       }
-    }) */
+    });
 };
-
 // Логин
 const login = (req, res, next) => {
   const { email, password } = req.body;
