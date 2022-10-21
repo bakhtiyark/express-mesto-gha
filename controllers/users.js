@@ -51,16 +51,22 @@ const createUser = (req, res, next) => {
 };
 
 // GET ME
-const getCurrentUser = (res, req, next) => {
-  const ownerId = req.user._id;
-  User.findById(ownerId)
-    .orFail(new NotFound('Пользователь не найден'))
+const getCurrentUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .orFail(new ValidationError('Пользователь не найден'))
     .then((user) => {
       if (!user) {
-        throw NotFound('Пользователь не найден');
+        throw new NotFound('Пользователь не найден');
       }
       res.send({ data: user });
-    }).catch(next);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new ValidationError('Некорректные данные'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 // Получение конкретного пользователя /users/:userId
