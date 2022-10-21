@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 // Ошибки
-// const AuthorizationError = require('../errors/AuthorizationError');
+const AuthorizationError = require('../errors/AuthorizationError');
 const NotFound = require('../errors/NotFound');
 const ValidationError = require('../errors/ValidationError');
 
@@ -115,7 +115,9 @@ const login = (req, res, next) => {
     const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
     res.status(200).send({ token });
   })
-    .catch(next);
+    .catch(() => {
+      next(new AuthorizationError('Неверные логин/пароль'));
+    });
 };
 
 module.exports = {

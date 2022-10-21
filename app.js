@@ -56,6 +56,7 @@ app.use('/cards', auth, require('./routes/cards'));
 app.use('/*', (req, res, next) => {
   next(new NotFound('Запрашиваемая страница не найдена'));
 });
+
 app.use(errors());
 
 app.use((err, req, res, next) => {
