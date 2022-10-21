@@ -54,13 +54,12 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-app.use(auth);
 // Роутинг
-app.use('/users', require('./routes/users'));
-app.use('/cards', require('./routes/cards'));
+app.use('/users', auth, require('./routes/users'));
+app.use('/cards', auth, require('./routes/cards'));
 
 // Заглушка
-app.use('/*', (req, res) => {
+app.use('/*', auth, (req, res) => {
   res.status(404).json({ message: 'Запрашиваемый ресурс не найден' });
 });
 app.use(errors());
