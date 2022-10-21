@@ -13,14 +13,19 @@ const ValidationError = require('../errors/ValidationError');
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const ownerId = req.user._id;
-
   Card.create({ name, link, owner: ownerId })
-    .then((card) => res.status(201).send(card))
+    .then((card) => {
+      if (!card) {
+        throw new NotFound('Карточка с указанным _id не найдена.');
+      }
+      res.send(card);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new ValidationError('Некорректные или неполные данные');
+        next(new ValidationError('Переданы некорректные данные'));
+      } else {
+        next(err);
       }
-      return next(err);
     });
 };
 

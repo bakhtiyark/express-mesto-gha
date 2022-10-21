@@ -15,14 +15,14 @@ const { login, createUser } = require('./controllers/users');
 // Порт
 const { PORT = 3000 } = process.env;
 
-const app = express();
-app.use(express.static(path.join(__dirname, 'public')));
-
 const NotFound = require('./errors/NotFound');
 
 // Подключение базы данных
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
+const app = express();
+
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true,
@@ -48,12 +48,9 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-// Авторизация
-
-app.use(auth);
 // Роутинг
-app.use('/users', require('./routes/users'));
-app.use('/cards', require('./routes/cards'));
+app.use('/users', auth, require('./routes/users'));
+app.use('/cards', auth, require('./routes/cards'));
 
 // Заглушка
 app.use('/*', (req, res, next) => {
