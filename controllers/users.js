@@ -132,7 +132,7 @@ const login = (req, res, next) => {
           throw new AuthorizationError('Неверный логин или пароль');
         }
         const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-        return res.status(200).send({ data: token });
+        return res.status(200).send({ token });
       });
     })
     .catch(next);
