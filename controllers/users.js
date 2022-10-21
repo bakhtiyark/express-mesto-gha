@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 // Ошибки
-const AuthorizationError = require('../errors/AuthorizationError');
+// const AuthorizationError = require('../errors/AuthorizationError');
 const NotFound = require('../errors/NotFound');
 const ValidationError = require('../errors/ValidationError');
 
@@ -111,19 +111,10 @@ const patchAvatar = (req, res, next) => {
 // Логин
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  return User.findOne({ email }).select('+password')
-    .then((user) => {
-      if (!user) {
-        throw new AuthorizationError('Неверный логин или пароль');
-      }
-      bcrypt.compare(password, user.password, (err, isValidPassword) => {
-        if (!isValidPassword) {
-          throw new AuthorizationError('Неверный логин или пароль');
-        }
-        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-        return res.status(200).send({ token });
-      });
-    })
+  return User.findUserByCredentials(email, password).then((user) => {
+    const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+    res.status(200).send({ token });
+  })
     .catch(next);
 };
 
