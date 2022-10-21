@@ -7,28 +7,28 @@ const {
   INCORRECT_DATA,
   SERVER_ERROR,
 } = require('../utils/constants');
+const ValidationError = require('../errors/ValidationError');
 
 //  Создание карты
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const ownerId = req.user._id;
 
   Card.create({ name, link, owner: ownerId })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(201).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(INCORRECT_DATA).send({ message: 'Некорректные данные' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+        throw new ValidationError('Некорректные или неполные данные');
       }
+      return next(err);
     });
 };
 
 //  Получить все карты
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => res.send({ data: cards }))
-    .catch(() => res.status(SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' }));
+    .then((cards) => res.status(200).send(cards))
+    .catch(next);
 };
 
 //  Удалить карточку
