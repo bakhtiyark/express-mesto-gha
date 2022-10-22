@@ -125,7 +125,7 @@ const login = (req, res, next) => {
       }
       return bcrypt.compare(password, user.password, (err, isValidPassword) => {
         if (!isValidPassword) {
-          throw new AuthorizationError('Неверный логин или пароль');
+          return next(new AuthorizationError('Неверный логин или пароль'));
         }
         const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
         return res.status(200).send({ token });
