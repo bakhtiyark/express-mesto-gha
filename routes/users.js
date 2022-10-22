@@ -19,7 +19,7 @@ router.get('/me', getCurrentUser);
 // Получение данных конкретного пользователя по ID
 router.get('/:userId', celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().alphanum().length(24),
+    userId: Joi.string().length(24).hex().required(),
   }),
 }), getUser);
 
@@ -28,7 +28,6 @@ router.patch('/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(regexpLink),
   }),
 }), patchUser);
 

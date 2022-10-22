@@ -35,12 +35,13 @@ const getCards = (req, res, next) => {
 
 //  Удалить карточку
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .orFail(new NotFound('Карточка не найдена'))
     .then((card) => {
       if (req.user._id === card.owner.toString()) {
         card.delete()
-          .then(() => res.status(200).json({ message: 'Карточка удалена' }));
+          .then(() => res.status(200).json({ message: 'Карточка удалена' }))
+          .catch(next);
       } else { throw new UnauthorizedError('Удалять можно только свои карты.'); }
     })
     .catch((err) => {

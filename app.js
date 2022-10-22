@@ -1,6 +1,5 @@
 // Модули
 const express = require('express');
-const path = require('path');
 const mongoose = require('mongoose');
 
 const {
@@ -22,7 +21,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const app = express();
 
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true,
@@ -53,7 +51,7 @@ app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
 // Заглушка
-app.use('/*', (req, res, next) => {
+app.use('/*', auth, (req, res, next) => {
   next(new NotFound('Запрашиваемая страница не найдена'));
 });
 

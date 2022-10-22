@@ -32,7 +32,7 @@ const createUser = (req, res, next) => {
         avatar: req.body.avatar,
         email: req.body.email,
         password: hash,
-      })
+      }).catch(next)
         .then(({
           name, about, _id, avatar, createdAt, email,
         }) => res.send({
@@ -120,9 +120,9 @@ const login = (req, res, next) => {
   return User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new AuthorizationError('Неверный логин или пароль');
+        return next(new AuthorizationError('Неверный логин или пароль'));
       }
-      bcrypt.compare(password, user.password, (err, isValidPassword) => {
+      return bcrypt.compare(password, user.password, (err, isValidPassword) => {
         if (!isValidPassword) {
           throw new AuthorizationError('Неверный логин или пароль');
         }
