@@ -32,7 +32,7 @@ const createUser = (req, res, next) => {
         avatar: req.body.avatar,
         email: req.body.email,
         password: hash,
-      }).catch(next)
+      })
         .then(({
           name, about, _id, avatar, createdAt, email,
         }) => res.send({
@@ -47,7 +47,8 @@ const createUser = (req, res, next) => {
             next(err);
           }
         });
-    });
+    })
+    .catch(next);
 };
 
 // GET ME
