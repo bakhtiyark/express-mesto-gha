@@ -11,6 +11,9 @@ const { regexpLink } = require('./utils/constants');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 
+// Error Logger
+const { errorLogger } = require('./middlewares/logger');
+
 // Порт
 const { PORT = 3000 } = process.env;
 
@@ -56,6 +59,7 @@ app.use('/*', auth, (req, res, next) => {
 });
 
 app.use(errors());
+app.use(errorLogger); // подключаем логгер ошибок
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
