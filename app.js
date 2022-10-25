@@ -2,17 +2,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
-const {
-  celebrate, errors, Joi, isCelebrateError,
-} = require('celebrate');
+const { celebrate, errors, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
 const { regexpLink } = require('./utils/constants');
 
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 
-// Error Logger
-const { errorLogger } = require('./middlewares/logger');
+const errorHandler = require('./middlewares/error');
 
 // Порт
 const { PORT = 3000 } = process.env;
@@ -59,16 +56,8 @@ app.use('/*', auth, (req, res, next) => {
 });
 
 app.use(errors());
-app.use(errorLogger); // подключаем логгер ошибок
+// app.use(errorLogger); // подключаем логгер ошибок
 
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  if (isCelebrateError(err)) {
-    res.status(statusCode).json(err);
-  } else {
-    res.status(statusCode).json({ message: statusCode === 500 ? 'Внутренняя ошибка сервера' : message });
-  }
-  next();
-});
+app.use(errorHandler());
 
 app.listen(PORT);
