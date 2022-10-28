@@ -4,17 +4,15 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { celebrate, errors, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const allowedCors = require('./middlewares/cors');
-/*
-const corsOptionsDelegate = function (req, callback) {
-  let corsOptions;
-  if (allowedCors.indexOf(req.header('Origin')) !== -1) {
-    corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
-  } else {
-    corsOptions = { origin: false }; // disable CORS for this request
-  }
-  callback(null, corsOptions); // callback expects two parameters: error and options
-}; */
+
+const corsOptions = {
+  origin: '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+};
 // Константы
 
 const { regexpLink } = require('./utils/constants');
@@ -24,7 +22,7 @@ const { login, createUser } = require('./controllers/users');
 // Middlewares
 
 const errorHandler = require('./middlewares/error');
-const cors = require('./middlewares/cors');
+// const cors = require('./middlewares/cors');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
@@ -37,6 +35,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const app = express();
 
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true,
