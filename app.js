@@ -4,7 +4,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { celebrate, errors, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
-const cors = require('cors');
 
 // Константы
 
@@ -15,7 +14,7 @@ const { login, createUser } = require('./controllers/users');
 // Middlewares
 
 const errorHandler = require('./middlewares/error');
-// const cors = require('./middlewares/cors');
+const cors = require('./middlewares/cors');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
@@ -27,7 +26,6 @@ const NotFound = require('./errors/NotFound');
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const app = express();
-app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true,
@@ -64,8 +62,11 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-// Роутинг
+// Авторизация
+
 app.use(auth);
+
+// Роутинг
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
