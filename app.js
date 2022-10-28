@@ -5,14 +5,7 @@ const mongoose = require('mongoose');
 const { celebrate, errors, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const allowedCors = require('./middlewares/cors');
 
-const corsOptions = {
-  origin: '*',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-};
 // Константы
 
 const { regexpLink } = require('./utils/constants');
@@ -34,8 +27,14 @@ const NotFound = require('./errors/NotFound');
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const app = express();
-
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: ['http://localhost:3000',
+    'http://api.bakhtiyarkpr.nomoredomains.icu',
+    'http://bakhtiyarkpr.nomoredomains.icu',
+    'https://api.bakhtiyarkpr.nomoredomains.icu',
+    'https://bakhtiyarkpr.nomoredomains.icu'],
+  credentials: true,
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true,
@@ -73,12 +72,13 @@ app.post('/signup', celebrate({
 }), createUser);
 
 // Роутинг
+app.use(auth);
 
-app.use('/users', auth, require('./routes/users'));
-app.use('/cards', auth, require('./routes/cards'));
+app.use('/users', require('./routes/users'));
+app.use('/cards', require('./routes/cards'));
 
 // Заглушка
-app.use('/*', auth, (req, res, next) => {
+app.use('/*', (req, res, next) => {
   next(new NotFound('Запрашиваемая страница не найдена'));
 });
 

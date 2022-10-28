@@ -1,8 +1,8 @@
 const allowedCors = ['http://localhost:3000',
-  'http://api.bakhtiyarkpr.nomoredomains.icu/',
-  'http://bakhtiyarkpr.nomoredomains.icu/',
-  'https://api.bakhtiyarkpr.nomoredomains.icu/',
-  'https://bakhtiyarkpr.nomoredomains.icu/'];
+  'http://api.bakhtiyarkpr.nomoredomains.icu',
+  'http://bakhtiyarkpr.nomoredomains.icu',
+  'https://api.bakhtiyarkpr.nomoredomains.icu',
+  'https://bakhtiyarkpr.nomoredomains.icu'];
 
 module.exports = (req, res, next) => {
   const { method } = req;
