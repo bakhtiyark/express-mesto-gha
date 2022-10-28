@@ -27,14 +27,7 @@ const NotFound = require('./errors/NotFound');
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const app = express();
-app.use(cors({
-  origin: ['http://localhost:3000',
-    'http://api.bakhtiyarkpr.nomoredomains.icu',
-    'http://bakhtiyarkpr.nomoredomains.icu',
-    'https://api.bakhtiyarkpr.nomoredomains.icu',
-    'https://bakhtiyarkpr.nomoredomains.icu'],
-  credentials: true,
-}));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true,
