@@ -28,6 +28,7 @@ const NotFound = require('./errors/NotFound');
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const app = express();
+app.use(cors);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(bodyParser.json());
@@ -65,7 +66,6 @@ app.post('/signup', celebrate({
 }), createUser);
 
 // Роутинг
-app.use(cors);
 
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
