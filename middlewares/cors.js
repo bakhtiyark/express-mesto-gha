@@ -4,11 +4,12 @@ const allowedCors = ['http://localhost:3000',
   'https://api.bakhtiyarkpr.nomoredomains.icu',
   'https://bakhtiyarkpr.nomoredomains.icu'];
 
-const cors = (req, res, next) => {
+module.exports = (req, res, next) => {
   const { origin } = req.headers;
+  const { method } = req;
+
   const requestHeaders = req.headers['access-control-request-headers'];
 
-  const { method } = req;
   const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 
   if (method === 'OPTIONS') {
@@ -29,4 +30,3 @@ const cors = (req, res, next) => {
 
   return next();
 };
-module.exports = cors;

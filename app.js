@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 
 const { celebrate, errors, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
-const path = require('path');
 // Константы
 
 const { regexpLink } = require('./utils/constants');
@@ -29,7 +28,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const app = express();
 app.use(cors);
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
