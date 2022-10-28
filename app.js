@@ -2,9 +2,20 @@ require('dotenv').config();
 // Модули
 const express = require('express');
 const mongoose = require('mongoose');
-
+const cors = require('cors');
 const { celebrate, errors, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
+const allowedCors = require('./middlewares/cors');
+
+const corsOptionsDelegate = function (req, callback) {
+  let corsOptions;
+  if (allowedCors.indexOf(req.header('Origin')) !== -1) {
+    corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
+  } else {
+    corsOptions = { origin: false }; // disable CORS for this request
+  }
+  callback(null, corsOptions); // callback expects two parameters: error and options
+};
 // Константы
 
 const { regexpLink } = require('./utils/constants');
@@ -14,7 +25,7 @@ const { login, createUser } = require('./controllers/users');
 // Middlewares
 
 const errorHandler = require('./middlewares/error');
-const cors = require('./middlewares/cors');
+// const cors = require('./middlewares/cors');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
@@ -33,7 +44,7 @@ app.use(bodyParser.urlencoded({
   extended: true,
 }));
 
-app.use(cors);
+app.use(cors());
 
 // Crash test
 app.get('/crash-test', () => {
