@@ -31,7 +31,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 // Порт
 const { PORT = 3000 } = process.env;
-
+console.log('11');
 const NotFound = require('./errors/NotFound');
 
 // Подключение базы данных
