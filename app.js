@@ -17,6 +17,7 @@ const { login, createUser } = require('./controllers/users');
 const errorHandler = require('./middlewares/error');
 const cors = require('./middlewares/cors');
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 // Порт
 const { PORT = 3000 } = process.env;
@@ -33,7 +34,16 @@ app.use(bodyParser.urlencoded({
   extended: true,
 }));
 
+// Crash test
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 // signin
+app.use(requestLogger);
+app.use(errorLogger);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -63,15 +73,9 @@ app.use('/cards', auth, require('./routes/cards'));
 app.use('/*', auth, (req, res, next) => {
   next(new NotFound('Запрашиваемая страница не найдена'));
 });
-// Crash test
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
 
 app.use(errors());
 
-app.use(errorHandler());
+app.use(errorHandler);
 
 app.listen(PORT);
