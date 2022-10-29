@@ -79,7 +79,7 @@ const getUser = (req, res, next) => {
     if (!user) {
       throw new NotFound('Пользователь не найден');
     }
-    res.send( user );
+    res.send(user);
   }).catch((err) => {
     if (err.name === 'CastError') {
       next(new NotFound('Пользователь не найден'));
@@ -94,7 +94,7 @@ const patchUser = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(new ValidationError('Пользователь не найден'))
-    .then((user) => res.send(user ))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Некорректные данные'));
