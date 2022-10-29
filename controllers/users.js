@@ -91,7 +91,7 @@ const getUser = (req, res, next) => {
 
 // Обновление данных пользователя
 const patchUser = (req, res, next) => {
-  User.findByIdAndUpdate(req.user._id, req.user.name, req.user.about, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user._id, req.body.name, req.body.about, { new: true, runValidators: true })
     .orFail(new ValidationError('Пользователь не найден'))
     .then((user) => res.send(user))
     .catch((err) => {
