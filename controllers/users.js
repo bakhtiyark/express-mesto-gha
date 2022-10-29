@@ -22,7 +22,7 @@ const salt = 10;
 // Получить данные всех юзеров
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch(next);
 };
 // Создание юзера
@@ -62,7 +62,7 @@ const getCurrentUser = (req, res, next) => {
       if (!user) {
         throw new NotFound('Пользователь не найден');
       }
-      res.send({ data: user });
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -79,7 +79,7 @@ const getUser = (req, res, next) => {
     if (!user) {
       throw new NotFound('Пользователь не найден');
     }
-    res.send({ data: user });
+    res.send( user );
   }).catch((err) => {
     if (err.name === 'CastError') {
       next(new NotFound('Пользователь не найден'));
@@ -94,7 +94,7 @@ const patchUser = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(new ValidationError('Пользователь не найден'))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user ))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Некорректные данные'));
@@ -109,7 +109,7 @@ const patchAvatar = (req, res, next) => {
   const owner = req.user._id;
   User.findByIdAndUpdate(owner, { avatar: req.body.avatar }, { new: true, runValidators: true })
     .orFail(new NotFound('Пользователь не найден'))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Некорректные данные'));
